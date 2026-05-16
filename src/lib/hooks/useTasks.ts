@@ -5,14 +5,13 @@ import { useStore } from '@/lib/store/useStore'
 import type { Task } from '@/types'
 
 export function useTasks() {
-  const { user, tasks, setTasks, addTask, updateTask, removeTask } = useStore()
+  const { user, tasks, setTasks, updateTask, removeTask } = useStore()
   const unsubRef = useRef<(() => void) | null>(null)
   const pendingRef = useRef<Set<string>>(new Set())
 
   useEffect(() => {
     if (!user?.uid) return
     unsubRef.current = subscribeToTasks(user.uid, (incoming: Task[]) => {
-      // Merge: keep optimistic local state for pending tasks
       const pending = pendingRef.current
       if (pending.size === 0) {
         setTasks(incoming)
@@ -31,8 +30,8 @@ export function useTasks() {
 
   const create = async (data: Omit<Task, 'id'>) => {
     if (!user) return
-    const firestoreId = await createTask({ ...data, userId: user.uid })
-    addTask({ ...data, id: firestoreId })
+    // Do NOT add to local state - let subscribeToTasks handle it
+    await createTask({ ...data, userId: user.uid })
   }
 
   const update = async (id: string, data: Partial<Task>) => {
@@ -52,4 +51,3 @@ export function useTasks() {
 
   return { tasks, create, update, remove }
 }
-// v2
