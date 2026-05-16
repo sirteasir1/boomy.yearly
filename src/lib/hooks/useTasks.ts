@@ -21,8 +21,10 @@ export function useTasks() {
   }
 
   const update = async (id: string, data: Partial<Task>) => {
-    await fsUpdate(id, data)
+    // Update local state immediately (optimistic)
     updateTask(id, data)
+    // Then sync to Firestore
+    fsUpdate(id, data).catch(() => {})
   }
 
   const remove = async (id: string) => {
