@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react'
 import { Sidebar }  from './Sidebar'
 import { Topbar }   from './Topbar'
 import { AIPanel }  from './AIPanel'
+import { GlobalTimer } from './GlobalTimer'
 import { useStore } from '@/lib/store/useStore'
 
 export function AppShell({ children }: { children: React.ReactNode }) {
