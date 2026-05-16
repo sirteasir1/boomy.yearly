@@ -233,7 +233,7 @@ export default function LandingPage() {
         {/* Video bg */}
         <div style={{position:'absolute',top:'1%',left:0,right:0,bottom:0,zIndex:-1,overflow:'hidden'}}>
           <video autoPlay muted loop playsInline style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center top',opacity:.2,filter:'saturate(1.4) brightness(.75)'}}>
-            <source src="/hero-bg.mp4" type="video/mp4"/>
+            <source src="https://res.cloudinary.com/dbqafbjoi/video/upload/v1778931184/hero-bg.mp4.mp4" type="video/mp4"/>
           </video>
           <div style={{position:'absolute',inset:0,background:'linear-gradient(to bottom,rgba(2,2,9,1) 0%,rgba(2,2,9,.15) 25%,rgba(2,2,9,.05) 55%,rgba(2,2,9,.8) 85%,rgba(2,2,9,1) 100%)'}}/>
         </div>
