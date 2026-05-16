@@ -26,15 +26,17 @@ export default function NotesPage() {
   // ── Local state for instant typing (debounced Firestore save) ──
   const [localTitle,   setLocalTitle]   = useState('')
   const [localContent, setLocalContent] = useState('')
-  const saveTimerRef = useRef<NodeJS.Timeout>()
-  const activeIdRef  = useRef<string|null>(null)
+  const saveTimerRef   = useRef<NodeJS.Timeout>()
+  const activeIdRef    = useRef<string|null>(null)
+  const localTitleRef  = useRef<string>('')
+  const localContentRef= useRef<string>('')
 
   // Save immediately when navigating away
   useEffect(() => {
     return () => {
       clearTimeout(saveTimerRef.current)
       if (activeIdRef.current) {
-        update(activeIdRef.current, { title: localTitle, content: localContent, updatedAt: Date.now() })
+        update(activeIdRef.current, { title: localTitleRef.current, content: localContentRef.current, updatedAt: Date.now() })
       }
     }
   }, [localTitle, localContent])
@@ -50,6 +52,8 @@ export default function NotesPage() {
     if (active) {
       setLocalTitle(active.title)
       setLocalContent(active.content)
+      localTitleRef.current = active.title
+      localContentRef.current = active.content
     }
     activeIdRef.current = activeId
   }, [activeId])
@@ -85,11 +89,13 @@ export default function NotesPage() {
 
   const handleTitleChange = (val: string) => {
     setLocalTitle(val)
+    localTitleRef.current = val
     scheduleSave('title', val)
   }
 
   const handleContentChange = (val: string) => {
     setLocalContent(val)
+    localContentRef.current = val
     scheduleSave('content', val)
   }
 
