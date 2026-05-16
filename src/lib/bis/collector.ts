@@ -10,7 +10,8 @@ import { logEvent } from '@/lib/firebase/bis'
 import type { BehavioralEventType, EventMetadata } from './types'
 
 async function safeLogEvent(event: any) {
-  try { await logEvent(event) } catch(e) { console.warn("[BIS] skip:", e) }
+  console.log('[BIS] logging event:', event.type)
+  try { await logEvent(event); console.log('[BIS] success:', event.type) } catch(e) { console.warn('[BIS] skip:', e) }
 }
 
 function buildEvent(
