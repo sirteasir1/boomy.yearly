@@ -62,8 +62,8 @@ export async function createTask(data: Omit<Task, 'id'>): Promise<string> {
     const ref = await addDoc(collection(db, 'tasks'), { ...data, createdAt: now(), updatedAt: now() })
     return ref.id
   } catch (err: any) {
-    console.warn('[Firestore] createTask offline:', err.code)
-    return now().toString()
+    console.error('[Firestore] createTask FAILED:', err.code, err.message)
+    throw err
   }
 }
 
@@ -101,8 +101,8 @@ export async function createNote(data: Omit<Note, 'id'>): Promise<string> {
     const ref = await addDoc(collection(db, 'notes'), { ...data, createdAt: now(), updatedAt: now() })
     return ref.id
   } catch (err: any) {
-    console.warn('[Firestore] createNote offline:', err.code)
-    return now().toString()
+    console.error('[Firestore] createNote FAILED:', err.code, err.message)
+    throw err
   }
 }
 
