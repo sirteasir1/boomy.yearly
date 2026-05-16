@@ -1,4 +1,3 @@
-import type { Lang } from '@/lib/i18n/translations'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { BoomlyUser, Task, Note, Project } from '@/types'
@@ -53,9 +52,9 @@ export const useStore = create<BoomlyStore>()(
       projects:    [],
       setProjects: p  => set({ projects: p }),
       sidebarOpen:      true,
-      toggleSidebar:    () => set(s => ({ sidebarOpen: s.sidebarOpen })),
+      toggleSidebar:    () => set(s => ({ sidebarOpen: s.sidebarOpen === true ? false : true })),
       rightPanelOpen:   true,
-      toggleRightPanel: () => set(s => ({ rightPanelOpen: s.rightPanelOpen })),
+      toggleRightPanel: () => set(s => ({ rightPanelOpen: s.rightPanelOpen === true ? false : true })),
       lang:    "en",
       setLang: (lang) => set({ lang }),
       timerEndTime:  null,
