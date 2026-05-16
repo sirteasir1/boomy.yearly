@@ -9,15 +9,6 @@ import {
   type Unsubscribe, onSnapshot,
 } from 'firebase/firestore'
 import { db } from '@/lib/firebase/config'
-
-// Admin SDK for server-side operations
-let adminDb: any = null
-async function getAdminDb() {
-  if (!adminDb) {
-    try { const { adminDb: adb } = await import('@/lib/firebase/admin'); adminDb = adb } catch {}
-  }
-  return adminDb
-}
 import type {
   BehavioralEvent, UserBehavioralModel,
   BehavioralPattern, MemorySummary,
@@ -41,20 +32,7 @@ export async function getRecentEvents(
   days = 30
 ): Promise<BehavioralEvent[]> {
   try {
-    const since = now() - days * 24 * 60 * 60 * 1000
-    // Try admin SDK first (server-side)
-    const adb = await getAdminDb()
-    if (adb) {
-      const snap = await adb.collection('behavioral_events')
-        .where('userId', '==', userId)
-        .orderBy('timestamp', 'desc')
-        .limit(500)
-        .get()
-      return snap.docs
-        .map((d: any) => ({ id: d.id, ...d.data() } as BehavioralEvent))
-        .filter((e: BehavioralEvent) => e.timestamp >= since)
-    }
-    // Fallback: client SDK
+    // Simple query — only userId filter to avoid composite index requirement
     const q = query(
       collection(db, 'behavioral_events'),
       where('userId', '==', userId),
@@ -62,6 +40,7 @@ export async function getRecentEvents(
       limit(500),
     )
     const snap = await getDocs(q)
+    const since = now() - days * 24 * 60 * 60 * 1000
     return snap.docs
       .map(d => ({ id: d.id, ...d.data() } as BehavioralEvent))
       .filter(e => e.timestamp >= since)
