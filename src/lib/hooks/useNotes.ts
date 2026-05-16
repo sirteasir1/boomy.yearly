@@ -1,29 +1,28 @@
 'use client'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { subscribeToNotes, createNote, updateNote as fsUpdate, deleteNote as fsDelete } from '@/lib/firebase/firestore'
 import { useStore } from '@/lib/store/useStore'
 import type { Note } from '@/types'
 
 export function useNotes() {
-  const { user, notes, setNotes, addNote, updateNote, removeNote } = useStore()
-  const unsubRef = useRef<(() => void) | null>(null)
+  const { user, notes, setNotes, updateNote, removeNote } = useStore()
 
   useEffect(() => {
     if (!user?.uid) return
-    unsubRef.current = subscribeToNotes(user.uid, setNotes)
-    return () => unsubRef.current?.()
+    const unsub = subscribeToNotes(user.uid, setNotes)
+    return unsub
   }, [user?.uid])
 
   const create = async (data: Omit<Note, 'id'>): Promise<string> => {
     if (!user) return ''
+    // Let subscribeToNotes handle adding to local state
     const id = await createNote({ ...data, userId: user.uid })
-    addNote({ ...data, id })
     return id
   }
 
   const update = async (id: string, data: Partial<Note>) => {
-    await fsUpdate(id, data)
     updateNote(id, data)
+    fsUpdate(id, data).catch(() => {})
   }
 
   const remove = async (id: string) => {
