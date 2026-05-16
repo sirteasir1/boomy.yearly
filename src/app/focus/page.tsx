@@ -215,22 +215,17 @@ export default function FocusPage() {
       endTimeRef.current=endTime
       setTimer(endTime, mode, true)
       if(user) trackFocusStarted(user.uid,{plannedMinutes:Math.round(MODES_DEF[mode].secs/60),ambientSound:playing??undefined})
-      // If owner — sync to team
-      if(isOwner&&teamId){
-        updateDoc(doc(db,'teams',teamId),{
-          activeFocus:{startedBy:user?.uid,startedAt:Date.now(),endTime,mode,duration:secs}
-        }).catch(()=>{})
-      }
+
     } else {
       setTimer(endTimeRef.current, mode, false)
-      if(isOwner&&teamId) updateDoc(doc(db,'teams',teamId),{activeFocus:null}).catch(()=>{})
+  
     }
     setRunning(r=>!r)
   }
 
   const handleReset=()=>{
     setRunning(false); endTimeRef.current=null; stopTimer(); setSecs(MODES_DEF[mode].secs)
-    if(isOwner&&teamId) updateDoc(doc(db,'teams',teamId),{activeFocus:null}).catch(()=>{})
+
   }
   const handleSkip=()=>{
     if(running&&user) trackFocusCompleted(user.uid,{sessionMinutes:Math.round((MODES_DEF[mode].secs-secs)/60),plannedMinutes:Math.round(MODES_DEF[mode].secs/60),abandoned:true})
