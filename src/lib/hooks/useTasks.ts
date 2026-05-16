@@ -7,10 +7,25 @@ import type { Task } from '@/types'
 export function useTasks() {
   const { user, tasks, setTasks, addTask, updateTask, removeTask } = useStore()
   const unsubRef = useRef<(() => void) | null>(null)
+  const pendingRef = useRef<Set<string>>(new Set())
 
   useEffect(() => {
     if (!user?.uid) return
-    unsubRef.current = subscribeToTasks(user.uid, setTasks)
+    unsubRef.current = subscribeToTasks(user.uid, (incoming: Task[]) => {
+      // Merge: keep optimistic local state for pending tasks
+      const pending = pendingRef.current
+      if (pending.size === 0) {
+        setTasks(incoming)
+      } else {
+        const localTasks = useStore.getState().tasks
+        const merged = incoming.map(t =>
+          pending.has(t.id)
+            ? (localTasks.find(l => l.id === t.id) ?? t)
+            : t
+        )
+        setTasks(merged)
+      }
+    })
     return () => unsubRef.current?.()
   }, [user?.uid])
 
@@ -21,10 +36,13 @@ export function useTasks() {
   }
 
   const update = async (id: string, data: Partial<Task>) => {
-    // Update local state immediately (optimistic)
     updateTask(id, data)
-    // Then sync to Firestore
-    fsUpdate(id, data).catch(() => {})
+    pendingRef.current.add(id)
+    try {
+      await fsUpdate(id, data)
+    } finally {
+      setTimeout(() => pendingRef.current.delete(id), 2000)
+    }
   }
 
   const remove = async (id: string) => {
