@@ -1,0 +1,128 @@
+'use client'
+/**
+ * BIS Collector — the data pipeline.
+ *
+ * Every meaningful user action flows through here.
+ * Call these functions from pages/hooks when events happen.
+ * Data is collected silently in the background.
+ */
+import { logEvent } from '@/lib/firebase/bis'
+import type { BehavioralEventType, EventMetadata } from './types'
+
+function buildEvent(
+  userId: string,
+  type: BehavioralEventType,
+  metadata: EventMetadata = {}
+) {
+  const now = Date.now()
+  const d   = new Date(now)
+  return {
+    userId,
+    type,
+    timestamp:  now,
+    hour:       d.getHours(),
+    dayOfWeek:  d.getDay(),
+    metadata,
+  }
+}
+
+// ── Task events ────────────────────────────────────────────────
+export function trackTaskCreated(
+  userId: string,
+  opts: { taskId: string; priority: string; titleLength: number; estimatedMinutes?: number }
+) {
+  logEvent(buildEvent(userId, 'task_created', {
+    taskId:           opts.taskId,
+    taskPriority:     opts.priority as any,
+    taskTitleLength:  opts.titleLength,
+    estimatedMinutes: opts.estimatedMinutes,
+  }))
+}
+
+export function trackTaskCompleted(
+  userId: string,
+  opts: {
+    taskId:           string
+    priority:         string
+    estimatedMinutes?: number
+    createdAt:        number
+    postponedTimes:   number
+    hadSubtasks:      boolean
+  }
+) {
+  const actualMinutes = Math.round((Date.now() - opts.createdAt) / 60000)
+  logEvent(buildEvent(userId, 'task_completed', {
+    taskId:           opts.taskId,
+    taskPriority:     opts.priority as any,
+    estimatedMinutes: opts.estimatedMinutes,
+    actualMinutes,
+    postponedTimes:   opts.postponedTimes,
+    hadSubtasks:      opts.hadSubtasks,
+  }))
+}
+
+export function trackTaskPostponed(
+  userId: string,
+  opts: { taskId: string; postponedTimes: number; priority: string }
+) {
+  logEvent(buildEvent(userId, 'task_postponed', {
+    taskId:          opts.taskId,
+    postponedTimes:  opts.postponedTimes,
+    taskPriority:    opts.priority as any,
+  }))
+}
+
+// ── Focus events ───────────────────────────────────────────────
+export function trackFocusStarted(
+  userId: string,
+  opts: { plannedMinutes: number; ambientSound?: string }
+) {
+  logEvent(buildEvent(userId, 'focus_started', {
+    plannedMinutes: opts.plannedMinutes,
+    ambientSound:   opts.ambientSound,
+  }))
+}
+
+export function trackFocusCompleted(
+  userId: string,
+  opts: { sessionMinutes: number; plannedMinutes: number; abandoned: boolean }
+) {
+  logEvent(buildEvent(
+    userId,
+    opts.abandoned ? 'focus_abandoned' : 'focus_completed',
+    {
+      sessionMinutes:  opts.sessionMinutes,
+      plannedMinutes:  opts.plannedMinutes,
+      abandoned:       opts.abandoned,
+    }
+  ))
+}
+
+// ── Note events ────────────────────────────────────────────────
+export function trackNoteCreated(userId: string, opts: { noteId: string; wordCount: number }) {
+  logEvent(buildEvent(userId, 'note_created', {
+    noteId:    opts.noteId,
+    wordCount: opts.wordCount,
+  }))
+}
+
+export function trackNoteRevisited(userId: string, opts: { noteId: string; wordCount: number }) {
+  logEvent(buildEvent(userId, 'note_revisited', {
+    noteId:    opts.noteId,
+    wordCount: opts.wordCount,
+    isRevisit: true,
+  }))
+}
+
+// ── Planner events ─────────────────────────────────────────────
+export function trackPlannerGenerated(userId: string, opts: { tasksCount: number }) {
+  logEvent(buildEvent(userId, 'planner_generated', { tasksCount: opts.tasksCount }))
+}
+
+export function trackPlannerAccepted(userId: string) {
+  logEvent(buildEvent(userId, 'planner_accepted', {}))
+}
+
+export function trackPlannerModified(userId: string, opts: { modifiedBlocks: number }) {
+  logEvent(buildEvent(userId, 'planner_modified', { modifiedBlocks: opts.modifiedBlocks }))
+}

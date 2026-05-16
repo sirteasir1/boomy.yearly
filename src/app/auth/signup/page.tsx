@@ -1,0 +1,110 @@
+'use client'
+import { useLang } from '@/lib/i18n/useLang'
+import { useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
+import { useAuth } from '@/lib/hooks/useAuth'
+import { Loader2, ArrowRight } from 'lucide-react'
+import { friendlyAuthError } from '@/lib/firebase/authErrors'
+
+export default function SignupPage() {
+  const router = useRouter()
+  const { signup, loginWithGoogle } = useAuth()
+  const [name, setName]       = useState('')
+  const [email, setEmail]     = useState('')
+  const [pass, setPass]       = useState('')
+  const [loading, setLoading] = useState(false)
+  const [gLoading, setGLoading] = useState(false)
+  const [error, setError]     = useState('')
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (pass.length < 6) { setError('Password must be at least 6 characters.'); return }
+    setError(''); setLoading(true)
+    try { await signup(email, pass, name); router.push('/dashboard') }
+    catch (err: any) { setError(friendlyAuthError(err)) }
+    finally { setLoading(false) }
+  }
+
+  const google = async () => {
+    setError(''); setGLoading(true)
+    try { await loginWithGoogle(); router.push('/dashboard') }
+    catch (err: any) { setError(friendlyAuthError(err)) }
+    finally { setGLoading(false) }
+  }
+
+  const inputStyle = {
+    width:'100%', background:'rgba(255,255,255,.05)', border:'1px solid rgba(255,255,255,.1)',
+    borderRadius:14, padding:'13px 16px', color:'#f8fafc', fontSize:14, outline:'none',
+    fontFamily:'DM Sans,sans-serif', transition:'border-color .2s',
+  }
+
+  return (
+    <motion.div initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }} transition={{ duration:.35 }}>
+      <div style={{ marginBottom:28 }}>
+        <h1 style={{ fontFamily:'Syne,sans-serif', fontWeight:800, fontSize:30, color:'#f8fafc', marginBottom:8 }}>Create your account</h1>
+        <p style={{ fontSize:14, color:'#4b5563' }}>Join 14,000+ ambitious people in flow</p>
+      </div>
+
+      {error && (
+        <div style={{ background:'rgba(244,63,94,.1)', border:'1px solid rgba(244,63,94,.2)', color:'#f87171', fontSize:13, padding:'12px 16px', borderRadius:14, marginBottom:20 }}>
+          {error}
+        </div>
+      )}
+
+      {/* Google first — it's faster */}
+      <button onClick={google} disabled={gLoading}
+        style={{ width:'100%', background:'rgba(255,255,255,.06)', border:'1px solid rgba(255,255,255,.1)', borderRadius:14, padding:'13px', display:'flex', alignItems:'center', justifyContent:'center', gap:10, fontSize:14, fontWeight:500, color:'#e2e8f0', cursor:'pointer', transition:'all .2s', marginBottom:20 }}>
+        {gLoading ? <Loader2 size={16} style={{ animation:'spin 1s linear infinite' }}/> : (
+          <>
+            <svg width="18" height="18" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Sign up with Google
+          </>
+        )}
+      </button>
+
+      <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:20, color:'#2d3748', fontSize:12 }}>
+        <div style={{ flex:1, height:1, background:'rgba(255,255,255,.07)' }}/> or with email <div style={{ flex:1, height:1, background:'rgba(255,255,255,.07)' }}/>
+      </div>
+
+      <form onSubmit={submit} style={{ display:'flex', flexDirection:'column', gap:14 }}>
+        <div>
+          <label style={{ display:'block', fontSize:12, fontWeight:500, color:'#6b7280', marginBottom:7 }}>Full name</label>
+          <input value={name} onChange={e=>setName(e.target.value)} placeholder="Alex Johnson" required style={inputStyle}
+            onFocus={e=>e.currentTarget.style.borderColor='rgba(99,102,241,.6)'}
+            onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,.1)'} />
+        </div>
+        <div>
+          <label style={{ display:'block', fontSize:12, fontWeight:500, color:'#6b7280', marginBottom:7 }}>Email address</label>
+          <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com" required style={inputStyle}
+            onFocus={e=>e.currentTarget.style.borderColor='rgba(99,102,241,.6)'}
+            onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,.1)'} />
+        </div>
+        <div>
+          <label style={{ display:'block', fontSize:12, fontWeight:500, color:'#6b7280', marginBottom:7 }}>Password</label>
+          <input type="password" value={pass} onChange={e=>setPass(e.target.value)} placeholder="Min 6 characters" required style={inputStyle}
+            onFocus={e=>e.currentTarget.style.borderColor='rgba(99,102,241,.6)'}
+            onBlur={e=>e.currentTarget.style.borderColor='rgba(255,255,255,.1)'} />
+        </div>
+        <button type="submit" disabled={loading}
+          style={{ background:'linear-gradient(135deg,#6366f1,#06b6d4)', border:'none', borderRadius:14, padding:'14px', color:'#fff', fontFamily:'Syne,sans-serif', fontWeight:700, fontSize:15, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:8, boxShadow:'0 8px 28px rgba(99,102,241,.4)', opacity:loading?.7:1, marginTop:4 }}>
+          {loading ? <Loader2 size={16} style={{ animation:'spin 1s linear infinite' }}/> : <>Create account <ArrowRight size={16}/></>}
+        </button>
+      </form>
+
+      <p style={{ textAlign:'center', fontSize:12, color:'#2d3748', marginTop:20, lineHeight:1.6 }}>
+        By signing up, you agree to our <a href="#" style={{ color:'#818cf8', textDecoration:'none' }}>Terms</a> and <a href="#" style={{ color:'#818cf8', textDecoration:'none' }}>Privacy Policy</a>.
+      </p>
+      <p style={{ textAlign:'center', fontSize:13, color:'#4b5563', marginTop:12 }}>
+        Already have an account?{' '}
+        <Link href="/auth/login" style={{ color:'#818cf8', textDecoration:'none', fontWeight:600 }}>Sign in</Link>
+      </p>
+    </motion.div>
+  )
+}

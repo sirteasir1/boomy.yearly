@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuth()     { return request.auth != null }
+    function isOwner(uid) { return request.auth.uid == uid }
+
+    // ── User data ────────────────────────────────────────────
+    match /users/{uid} {
+      allow read:  if isAuth()              // allow user search
+      allow write: if isAuth() && isOwner(uid)
+    }
+
+    match /tasks/{id} {
+      allow read, write: if isAuth() && resource.data.userId == request.auth.uid
+      allow create:      if isAuth() && request.resource.data.userId == request.auth.uid
+    }
+    match /notes/{id} {
+      allow read, write: if isAuth() && resource.data.userId == request.auth.uid
+      allow create:      if isAuth() && request.resource.data.userId == request.auth.uid
+    }
+    match /events/{id} {
+      allow read, write: if isAuth() && resource.data.userId == request.auth.uid
+      allow create:      if isAuth() && request.resource.data.userId == request.auth.uid
+    }
+    match /focus_sessions/{id} {
+      allow read, write: if isAuth() && resource.data.userId == request.auth.uid
+      allow create:      if isAuth() && request.resource.data.userId == request.auth.uid
+    }
+    match /projects/{id} {
+      allow read, write: if isAuth() && resource.data.userId == request.auth.uid
+      allow create:      if isAuth() && request.resource.data.userId == request.auth.uid
+    }
+    match /invites/{code} {
+      allow read:          if isAuth()
+      allow create:        if isAuth() && request.resource.data.ownerId == request.auth.uid
+      allow update, delete:if isAuth() && resource.data.ownerId == request.auth.uid
+    }
+
+    // ── BIS collections ───────────────────────────────────────
+    match /behavioral_events/{id} {
+      allow read:   if isAuth() && resource.data.userId == request.auth.uid
+      allow create: if isAuth() && request.resource.data.userId == request.auth.uid
+    }
+    match /user_models/{uid}      { allow read, write: if isAuth() && isOwner(uid) }
+    match /patterns/{uid}         { allow read, write: if isAuth() && isOwner(uid) }
+    match /memory_summaries/{uid} { allow read, write: if isAuth() && isOwner(uid) }
+
+    // ── Focus room chat — any authenticated user can read/write ──
+    match /focus_messages/{id} {
+      allow read:   if isAuth()
+      allow create: if isAuth() && request.resource.data.userId == request.auth.uid
+      allow delete: if isAuth() && resource.data.userId == request.auth.uid
+    }
+  }
+}
