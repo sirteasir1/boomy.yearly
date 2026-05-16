@@ -69,8 +69,20 @@ export default function NotesPage() {
       update(id, { [field]: val, updatedAt: Date.now() })
       setSaved(true)
       setTimeout(() => setSaved(false), 1500)
-    }, 600)
+    }, 300)
   }, [update])
+
+  // Save immediately on unmount
+  useEffect(() => {
+    return () => {
+      clearTimeout(saveTimerRef.current)
+      const id = activeIdRef.current
+      if (id) {
+        const { localTitle, localContent } = { localTitle, localContent }
+        update(id, { title: localTitle, content: localContent, updatedAt: Date.now() })
+      }
+    }
+  }, [])
 
   const handleTitleChange = (val: string) => {
     setLocalTitle(val)
