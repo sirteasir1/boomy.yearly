@@ -115,6 +115,7 @@ export default function TasksPage() {
                           <button onClick={e=>{
   e.stopPropagation()
   const nextStatus = NEXT[task.status]!
+  console.log('[TASK] moving to:', nextStatus, 'task id:', task.id)
   update(task.id,{status:nextStatus,updatedAt:Date.now()})
   if(nextStatus==='done'&&user){
     trackTaskCompleted(user.uid,{taskId:task.id,priority:task.priority,createdAt:task.createdAt,postponedTimes:(task as any).postponedTimes??0,hadSubtasks:false})
