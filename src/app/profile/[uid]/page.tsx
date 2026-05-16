@@ -13,7 +13,8 @@ import { format, subDays } from 'date-fns'
 const FV = { hidden:{opacity:0,y:14}, visible:(i:number)=>({opacity:1,y:0,transition:{delay:i*.07}}) }
 const HM_COL = ['rgba(255,255,255,.04)','rgba(99,102,241,.2)','rgba(99,102,241,.4)','rgba(99,102,241,.65)','#6366f1']
 
-export default function PublicProfilePage({ params }: { params: { uid: string } }) {
+export default async function PublicProfilePage({ params }: { params: Promise<{ uid: string }> }) {
+  const { uid } = await params
   const router      = useRouter()
   const { user: me }= useStore()
   const [profile,   setProfile]  = useState<any>(null)
@@ -23,8 +24,6 @@ export default function PublicProfilePage({ params }: { params: { uid: string } 
   const [sessions,  setSessions] = useState<any[]>([])
   const [tasks,     setTasks]    = useState<any[]>([])
   const [loading,   setLoading]  = useState(true)
-
-  const uid = params.uid
 
   // Redirect to own profile
   useEffect(() => {
