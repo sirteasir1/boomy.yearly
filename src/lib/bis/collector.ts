@@ -9,6 +9,10 @@
 import { logEvent } from '@/lib/firebase/bis'
 import type { BehavioralEventType, EventMetadata } from './types'
 
+async function safeLogEvent(event: any) {
+  try { await logEvent(event) } catch(e) { console.warn("[BIS] skip:", e) }
+}
+
 function buildEvent(
   userId: string,
   type: BehavioralEventType,
@@ -31,7 +35,7 @@ export function trackTaskCreated(
   userId: string,
   opts: { taskId: string; priority: string; titleLength: number; estimatedMinutes?: number }
 ) {
-  logEvent(buildEvent(userId, 'task_created', {
+  safeLogEvent(buildEvent(userId, 'task_created', {
     taskId:           opts.taskId,
     taskPriority:     opts.priority as any,
     taskTitleLength:  opts.titleLength,
@@ -51,7 +55,7 @@ export function trackTaskCompleted(
   }
 ) {
   const actualMinutes = Math.round((Date.now() - opts.createdAt) / 60000)
-  logEvent(buildEvent(userId, 'task_completed', {
+  safeLogEvent(buildEvent(userId, 'task_completed', {
     taskId:           opts.taskId,
     taskPriority:     opts.priority as any,
     estimatedMinutes: opts.estimatedMinutes,
@@ -65,7 +69,7 @@ export function trackTaskPostponed(
   userId: string,
   opts: { taskId: string; postponedTimes: number; priority: string }
 ) {
-  logEvent(buildEvent(userId, 'task_postponed', {
+  safeLogEvent(buildEvent(userId, 'task_postponed', {
     taskId:          opts.taskId,
     postponedTimes:  opts.postponedTimes,
     taskPriority:    opts.priority as any,
@@ -77,7 +81,7 @@ export function trackFocusStarted(
   userId: string,
   opts: { plannedMinutes: number; ambientSound?: string }
 ) {
-  logEvent(buildEvent(userId, 'focus_started', {
+  safeLogEvent(buildEvent(userId, 'focus_started', {
     plannedMinutes: opts.plannedMinutes,
     ambientSound:   opts.ambientSound,
   }))
@@ -87,7 +91,7 @@ export function trackFocusCompleted(
   userId: string,
   opts: { sessionMinutes: number; plannedMinutes: number; abandoned: boolean }
 ) {
-  logEvent(buildEvent(
+  safeLogEvent(buildEvent(
     userId,
     opts.abandoned ? 'focus_abandoned' : 'focus_completed',
     {
@@ -100,14 +104,14 @@ export function trackFocusCompleted(
 
 // ── Note events ────────────────────────────────────────────────
 export function trackNoteCreated(userId: string, opts: { noteId: string; wordCount: number }) {
-  logEvent(buildEvent(userId, 'note_created', {
+  safeLogEvent(buildEvent(userId, 'note_created', {
     noteId:    opts.noteId,
     wordCount: opts.wordCount,
   }))
 }
 
 export function trackNoteRevisited(userId: string, opts: { noteId: string; wordCount: number }) {
-  logEvent(buildEvent(userId, 'note_revisited', {
+  safeLogEvent(buildEvent(userId, 'note_revisited', {
     noteId:    opts.noteId,
     wordCount: opts.wordCount,
     isRevisit: true,
@@ -116,13 +120,13 @@ export function trackNoteRevisited(userId: string, opts: { noteId: string; wordC
 
 // ── Planner events ─────────────────────────────────────────────
 export function trackPlannerGenerated(userId: string, opts: { tasksCount: number }) {
-  logEvent(buildEvent(userId, 'planner_generated', { tasksCount: opts.tasksCount }))
+  safeLogEvent(buildEvent(userId, 'planner_generated', { tasksCount: opts.tasksCount }))
 }
 
 export function trackPlannerAccepted(userId: string) {
-  logEvent(buildEvent(userId, 'planner_accepted', {}))
+  safeLogEvent(buildEvent(userId, 'planner_accepted', {}))
 }
 
 export function trackPlannerModified(userId: string, opts: { modifiedBlocks: number }) {
-  logEvent(buildEvent(userId, 'planner_modified', { modifiedBlocks: opts.modifiedBlocks }))
+  safeLogEvent(buildEvent(userId, 'planner_modified', { modifiedBlocks: opts.modifiedBlocks }))
 }
