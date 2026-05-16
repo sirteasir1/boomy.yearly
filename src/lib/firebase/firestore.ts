@@ -60,6 +60,7 @@ export function subscribeToTasks(userId: string, cb: (tasks: Task[]) => void): U
 export async function createTask(data: Omit<Task, 'id'>): Promise<string> {
   try {
     const ref = await addDoc(collection(db, 'tasks'), { ...data, createdAt: now(), updatedAt: now() })
+    await updateDoc(ref, { id: ref.id })
     return ref.id
   } catch (err: any) {
     console.error('[Firestore] createTask FAILED:', err.code, err.message)
