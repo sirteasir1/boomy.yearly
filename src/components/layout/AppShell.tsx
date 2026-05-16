@@ -72,6 +72,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
         {rightPanelOpen && <AIPanel />}
       </div>
+      <GlobalTimer/>
     </div>
   )
 }
@@ -108,6 +109,7 @@ function TickerTape() {
           </span>
         ))}
       </div>
+      <GlobalTimer/>
     </div>
   )
 }
