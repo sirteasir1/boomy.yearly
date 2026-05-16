@@ -100,6 +100,7 @@ export function subscribeToNotes(userId: string, cb: (notes: Note[]) => void): U
 export async function createNote(data: Omit<Note, 'id'>): Promise<string> {
   try {
     const ref = await addDoc(collection(db, 'notes'), { ...data, createdAt: now(), updatedAt: now() })
+    await updateDoc(ref, { id: ref.id })
     return ref.id
   } catch (err: any) {
     console.error('[Firestore] createNote FAILED:', err.code, err.message)
