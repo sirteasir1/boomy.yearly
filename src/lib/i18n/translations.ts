@@ -304,7 +304,6 @@ export const T = {
 } as const
 
 export type TKey = keyof typeof T['en']
-export type { Lang }
 
 export function t(lang: Lang, key: TKey): string {
   return ((T[lang] as any)[key] ?? (T['en'] as any)[key] ?? String(key))
