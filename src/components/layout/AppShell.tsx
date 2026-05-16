@@ -109,7 +109,6 @@ function TickerTape() {
           </span>
         ))}
       </div>
-      <GlobalTimer/>
     </div>
   )
 }
