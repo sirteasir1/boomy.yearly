@@ -31,8 +31,8 @@ export function useTasks() {
 
   const create = async (data: Omit<Task, 'id'>) => {
     if (!user) return
-    const id = await createTask({ ...data, userId: user.uid })
-    addTask({ ...data, id })
+    const firestoreId = await createTask({ ...data, userId: user.uid })
+    addTask({ ...data, id: firestoreId })
   }
 
   const update = async (id: string, data: Partial<Task>) => {
