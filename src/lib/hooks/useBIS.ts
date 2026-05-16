@@ -8,7 +8,7 @@
  */
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useStore } from '@/lib/store/useStore'
-import { subscribeToUserModel, getPatterns, getMemorySummary } from '@/lib/firebase/bis'
+import { subscribeToUserModel, getPatterns, getMemorySummary, getRecentEvents } from '@/lib/firebase/bis'
 import type { UserBehavioralModel, BehavioralPattern, MemorySummary } from '@/lib/bis/types'
 
 const ANALYSIS_COOLDOWN = 30 * 1000 // 30 seconds between analyses
