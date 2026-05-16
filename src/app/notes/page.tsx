@@ -78,8 +78,7 @@ export default function NotesPage() {
       clearTimeout(saveTimerRef.current)
       const id = activeIdRef.current
       if (id) {
-        const { localTitle, localContent } = { localTitle, localContent }
-        update(id, { title: localTitle, content: localContent, updatedAt: Date.now() })
+        update(id, { updatedAt: Date.now() })
       }
     }
   }, [])
