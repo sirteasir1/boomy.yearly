@@ -137,7 +137,7 @@ function LearnVideo() {
         playsInline
         style={{width:'100%',height:'100%',display:'block',objectFit:'cover'}}
       >
-        <source src="/learn-video.mp4" type="video/mp4"/>
+        <source src="https://res.cloudinary.com/dbqafbjoi/video/upload/v1778931757/learn-video_zkzahf.mp4" type="video/mp4"/>
       </video>
     </div>
   )
