@@ -29,6 +29,16 @@ export default function NotesPage() {
   const saveTimerRef = useRef<NodeJS.Timeout>()
   const activeIdRef  = useRef<string|null>(null)
 
+  // Save immediately when navigating away
+  useEffect(() => {
+    return () => {
+      clearTimeout(saveTimerRef.current)
+      if (activeIdRef.current) {
+        update(activeIdRef.current, { title: localTitle, content: localContent, updatedAt: Date.now() })
+      }
+    }
+  }, [localTitle, localContent])
+
   const active   = notes.find(n => n.id === activeId)
   const filtered = notes.filter(n =>
     n.title.toLowerCase().includes(query.toLowerCase()) ||
