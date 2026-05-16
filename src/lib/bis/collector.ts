@@ -55,14 +55,15 @@ export function trackTaskCompleted(
   }
 ) {
   const actualMinutes = Math.round((Date.now() - opts.createdAt) / 60000)
-  safeLogEvent(buildEvent(userId, 'task_completed', {
-    taskId:           opts.taskId,
-    taskPriority:     opts.priority as any,
-    estimatedMinutes: opts.estimatedMinutes,
+  const meta: any = {
+    taskId:         opts.taskId,
+    taskPriority:   opts.priority,
     actualMinutes,
-    postponedTimes:   opts.postponedTimes,
-    hadSubtasks:      opts.hadSubtasks,
-  }))
+    postponedTimes: opts.postponedTimes,
+    hadSubtasks:    opts.hadSubtasks,
+  }
+  if (opts.estimatedMinutes !== undefined) meta.estimatedMinutes = opts.estimatedMinutes
+  safeLogEvent(buildEvent(userId, 'task_completed', meta))
 }
 
 export function trackTaskPostponed(
