@@ -50,10 +50,11 @@ export function useBIS() {
 
     setLoading(true)
     try {
+      const events = await getRecentEvents(user.uid, 30)
       await fetch('/api/bis/analyze', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ userId: user.uid }),
+        body:    JSON.stringify({ userId: user.uid, events }),
       })
 
       // Refresh patterns after analysis
