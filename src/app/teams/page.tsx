@@ -10,7 +10,8 @@ import {
   arrayUnion, arrayRemove, onSnapshot,
 } from 'firebase/firestore'
 import { getInitials } from '@/lib/utils'
-import { Users, Copy, Check, RefreshCw, Plus, Search, Loader2, LogOut, Crown, X } from 'lucide-react'
+import { Users, Copy, Check, RefreshCw, Plus, Search, Loader2, LogOut, Crown, X, ExternalLink } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 function genCode() { return Math.random().toString(36).substring(2,8).toUpperCase() }
 
@@ -34,7 +35,8 @@ type Team = {
 
 export default function TeamsPage() {
   const { user } = useStore()
-  const tr = useLang()
+  const tr     = useLang()
+  const router = useRouter()
 
   const [team,       setTeam]      = useState<Team | null>(null)
   const [loading,    setLoading]   = useState(true)
@@ -331,7 +333,8 @@ export default function TeamsPage() {
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))',gap:12}}>
             {team.members.map((m,i)=>(
               <motion.div key={m.uid} initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} transition={{delay:i*.06}}
-                style={{background:'rgba(7,7,26,.8)',border:`1px solid ${m.uid===user?.uid?'rgba(99,102,241,.25)':'rgba(255,255,255,.07)'}`,borderRadius:20,padding:18,display:'flex',alignItems:'center',gap:14}}>
+                onClick={()=>m.uid!==user?.uid&&router.push(`/profile/${m.uid}`)}
+                style={{background:'rgba(7,7,26,.8)',border:`1px solid ${m.uid===user?.uid?'rgba(99,102,241,.25)':'rgba(255,255,255,.07)'}`,borderRadius:20,padding:18,display:'flex',alignItems:'center',gap:14,cursor:m.uid!==user?.uid?'pointer':'default'}}>
                 <div style={{position:'relative',flexShrink:0}}>
                   <div style={{width:46,height:46,borderRadius:'50%',background:`linear-gradient(135deg,${MEMBER_COLORS[i%4]},#6366f1)`,display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'DM Sans,sans-serif',fontWeight:800,fontSize:16,color:'#fff'}}>
                     {getInitials(m.name||'U')}
@@ -424,3 +427,4 @@ export default function TeamsPage() {
     </div>
   )
 }
+
