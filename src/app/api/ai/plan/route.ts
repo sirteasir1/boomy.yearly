@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   try {
     const { tasks, userId, userName } = await req.json()
 
-    const bisCtx: BISContext = {
+    let bisCtx: BISContext = {
       userModel: null, memory: null, patterns: [],
       todayStats: { tasksCompleted:0, focusMinutes:0, sessionsCount:0, hourOfDay: new Date().getHours() },
     }
