@@ -15,11 +15,11 @@ export async function POST(req: NextRequest) {
   const limited = rateLimit(req, 20, 60000)
   if (limited) return limited
   try {
-    const { tasks, userId, userName } = await req.json()
+    const { tasks, userId, userName, timezone, localHour } = await req.json()
 
     let bisCtx: BISContext = {
       userModel: null, memory: null, patterns: [],
-      todayStats: { tasksCompleted:0, focusMinutes:0, sessionsCount:0, hourOfDay: new Date().getHours() },
+      todayStats: { tasksCompleted:0, focusMinutes:0, sessionsCount:0, hourOfDay: localHour ?? new Date().getHours() },
     }
 
 
