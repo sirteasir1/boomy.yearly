@@ -14,20 +14,12 @@ export async function POST(req: NextRequest) {
   try {
     const { tasks, userId, userName } = await req.json()
 
-    let bisCtx: BISContext = {
+    const bisCtx: BISContext = {
       userModel: null, memory: null, patterns: [],
       todayStats: { tasksCompleted:0, focusMinutes:0, sessionsCount:0, hourOfDay: new Date().getHours() },
     }
 
-    if (userId) {
-      const timeout = (p: Promise<any>, fallback: any) => Promise.race([p, new Promise(r => setTimeout(() => r(fallback), 3000))])
-      const [model, memory, patterns, sessions] = await Promise.all([
-        timeout(getUserModel(userId), null),
-        timeout(getMemorySummary(userId), null),
-        timeout(getPatterns(userId), []),
-        timeout(getFocusSessions(userId), []),
-      ])
-      const todaySess = (sessions as any[]).filter((s: any) => s.date === new Date().toISOString().slice(0,10) && s.completed)
+    if (false) {
       bisCtx = {
         userModel: model, memory, patterns,
         todayStats: {
