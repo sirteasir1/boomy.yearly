@@ -1,4 +1,5 @@
 'use client'
+import posthog from 'posthog-js'
 import { useLang } from '@/lib/i18n/useLang'
 import { useState } from 'react'
 import Link from 'next/link'
@@ -22,14 +23,14 @@ export default function SignupPage() {
     e.preventDefault()
     if (pass.length < 6) { setError('Password must be at least 6 characters.'); return }
     setError(''); setLoading(true)
-    try { await signup(email, pass, name); router.push('/dashboard') }
+    try { await signup(email, pass, name); posthog.capture('user_signed_up', { method: 'email' }); router.push('/dashboard') }
     catch (err: any) { setError(friendlyAuthError(err)) }
     finally { setLoading(false) }
   }
 
   const google = async () => {
     setError(''); setGLoading(true)
-    try { await loginWithGoogle(); router.push('/dashboard') }
+    try { await loginWithGoogle(); posthog.capture('user_signed_up', { method: 'google' }); router.push('/dashboard') }
     catch (err: any) { setError(friendlyAuthError(err)) }
     finally { setGLoading(false) }
   }
