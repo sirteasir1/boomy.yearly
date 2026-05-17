@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit } from '@/lib/rateLimit'
 import { generate } from '@/lib/gemini/client'
 import { getUserModel, getMemorySummary, getPatterns } from '@/lib/firebase/bis'
 import { buildAIContext } from '@/lib/bis/context'
@@ -11,6 +12,8 @@ Available tools: createTask, startFocusSession, createCalendarEvent.
 Respond ONLY with valid JSON.`
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, 20, 60000)
+  if (limited) return limited
   try {
     const { message, userId, userName, currentTasks } = await req.json()
 

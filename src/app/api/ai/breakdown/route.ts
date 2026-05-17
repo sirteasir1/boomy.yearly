@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit } from '@/lib/rateLimit'
 import { generate } from '@/lib/gemini/client'
 import { getUserModel } from '@/lib/firebase/bis'
 
@@ -7,6 +8,8 @@ Each subtask must be completable in under 60 minutes.
 Respond ONLY with valid JSON — no markdown, no explanation.`
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, 20, 60000)
+  if (limited) return limited
   try {
     const { task, userId } = await req.json()
     if (!task?.trim()) return NextResponse.json({ error: 'task is required' }, { status: 400 })

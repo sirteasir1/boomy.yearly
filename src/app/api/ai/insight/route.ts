@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit } from '@/lib/rateLimit'
 import { generate } from '@/lib/gemini/client'
 import { getUserModel, getMemorySummary, getPatterns } from '@/lib/firebase/bis'
 import { buildInsightContext } from '@/lib/bis/context'
@@ -8,6 +9,8 @@ const SYSTEM = `You are Boom AI. Generate a personalized daily insight based on 
 Be specific, actionable, encouraging. Max 2 sentences. No generic advice.`
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, 20, 60000)
+  if (limited) return limited
   try {
     const { userId, userName, tasksCount, doneCount, hour } = await req.json()
 

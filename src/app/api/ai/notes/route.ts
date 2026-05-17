@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit } from '@/lib/rateLimit'
 import { generate } from '@/lib/gemini/client'
 
 const SYSTEM = `You are Boom AI — a knowledgeable, concise assistant.
 Help users think more clearly about their notes. Be direct and specific.`
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, 20, 60000)
+  if (limited) return limited
   try {
     const { title, content, prompt: userPrompt } = await req.json()
     const p = `Note title: "${title}"

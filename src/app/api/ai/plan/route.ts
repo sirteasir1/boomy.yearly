@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit } from '@/lib/rateLimit'
 import { generate } from '@/lib/gemini/client'
 import { getUserModel, getMemorySummary, getPatterns } from '@/lib/firebase/bis'
 import { getFocusSessions } from '@/lib/firebase/firestore'
@@ -11,6 +12,8 @@ Build schedules that work WITH their biology, not against it.
 Respond ONLY with valid JSON — no markdown, no extra text.`
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, 20, 60000)
+  if (limited) return limited
   try {
     const { tasks, userId, userName } = await req.json()
 
