@@ -1,17 +1,16 @@
 'use client'
-/**
- * useBIS — the main hook for consuming BIS data in components.
- *
- * - Provides userModel, patterns, memorySummary
- * - Triggers analysis after significant events
- * - Auto-analyzes on first load if enough data exists
- */
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useStore } from '@/lib/store/useStore'
-import { subscribeToUserModel, getPatterns, getMemorySummary } from '@/lib/firebase/bis'
-import type { UserBehavioralModel, BehavioralPattern, MemorySummary } from '@/lib/bis/types'
+import { saveUserModel, savePatterns, getPatterns, getMemorySummary } from '@/lib/firebase/bis'
+import { computeUserModel, detectPatterns } from '@/lib/bis/analyzer'
+import type { UserBehavioralModel, BehavioralPattern, MemorySummary, BehavioralEvent } from '@/lib/bis/types'
 
-const ANALYSIS_COOLDOWN = 30 * 1000 // 30 seconds between analyses
+const COOLDOWN = 30_000
+const LS_KEY = (uid: string) => `bis_events_${uid}`
+
+function loadEvents(uid: string): BehavioralEvent[] {
+  try { return JSON.parse(localStorage.getItem(LS_KEY(uid)) || '[]') } catch { return [] }
+}
 
 export function useBIS() {
   const { user } = useStore()
@@ -20,69 +19,46 @@ export function useBIS() {
   const [memory,   setMemory]   = useState<MemorySummary | null>(null)
   const [loading,  setLoading]  = useState(false)
   const lastAnalysis = useRef(0)
-  const accEvents    = useRef<any[]>([])
-
-  // Subscribe to real-time model updates from Firestore
-  // Accumulate events from collector
-  useEffect(() => {
-    const handler = (e: any) => {
-      accEvents.current = [...accEvents.current.slice(-99), e.detail]
-    }
-    window.addEventListener('bis:event', handler)
-    return () => window.removeEventListener('bis:event', handler)
-  }, [])
 
   useEffect(() => {
     if (!user?.uid) return
-    const unsub = subscribeToUserModel(user.uid, setModel)
-
-    // Load patterns and memory on mount + trigger analysis
     Promise.all([
       getPatterns(user.uid).catch(() => []),
       getMemorySummary(user.uid).catch(() => null),
-    ]).then(([p, m]) => {
-      setPatterns(p); setMemory(m)
-    })
+    ]).then(([p, m]) => { setPatterns(p as BehavioralPattern[]); setMemory(m) })
 
-    // Auto-analyze on first mount (no cooldown for first run)
     lastAnalysis.current = 0
-    setTimeout(() => analyze(), 1000) // slight delay to let auth settle
-
-    return unsub
+    setTimeout(() => analyze(), 1000)
   }, [user?.uid])
 
-  /** Trigger a full behavioral analysis */
   const analyze = useCallback(async () => {
     if (!user?.uid) return
     const now = Date.now()
-    if (now - lastAnalysis.current < ANALYSIS_COOLDOWN) return
+    if (now - lastAnalysis.current < COOLDOWN) return
     lastAnalysis.current = now
 
     setLoading(true)
     try {
-      // Read from localStorage for persistence across sessions
-      let events: any[] = []
-      try {
-        const stored = localStorage.getItem('bis_events_' + user.uid)
-        events = stored ? JSON.parse(stored) : []
-      } catch { events = [] }
+      // Read events from localStorage — no Firestore needed
+      const events = loadEvents(user.uid)
       if (events.length === 0) { setLoading(false); return }
-      await fetch('/api/bis/analyze', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ userId: user.uid, events }),
-      })
 
-      // Refresh patterns after analysis
-      const fresh = await getPatterns(user.uid)
-      setPatterns(fresh)
+      // Compute model & patterns entirely on client
+      const newModel    = computeUserModel(user.uid, events, model)
+      const newPatterns = detectPatterns(newModel, events)
+
+      setModel(newModel)
+      setPatterns(newPatterns)
+
+      // Save to Firestore in background (client SDK — has auth)
+      saveUserModel(newModel).catch(() => {})
+      savePatterns(user.uid, newPatterns).catch(() => {})
     } catch (err) {
       console.warn('[useBIS] analyze failed:', err)
     }
     setLoading(false)
-  }, [user?.uid])
+  }, [user?.uid, model])
 
-  /** Trigger memory summary update (runs after analysis) */
   const updateMemory = useCallback(async () => {
     if (!user?.uid || !user?.name) return
     try {
@@ -98,20 +74,12 @@ export function useBIS() {
     } catch {}
   }, [user?.uid, user?.name])
 
-  /** Call after completing a task, session, etc. */
-  const onSignificantEvent = useCallback(() => {
-    analyze()
-  }, [analyze])
-
-  // Critical patterns only (for alerts)
-  const criticalPatterns = patterns.filter(p =>
-    p.severity === 'critical' || p.severity === 'warning'
-  )
+  const onSignificantEvent = useCallback(() => { analyze() }, [analyze])
 
   return {
     model,
     patterns,
-    criticalPatterns,
+    criticalPatterns: patterns.filter(p => p.severity === 'critical' || p.severity === 'warning'),
     memory,
     loading,
     analyze,
@@ -120,3 +88,4 @@ export function useBIS() {
     hasEnoughData: (model?.dataPoints ?? 0) >= 3,
   }
 }
+
