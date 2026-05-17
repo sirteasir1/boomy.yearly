@@ -49,6 +49,7 @@ export default function PlannerPage() {
       const res = await fetch('/api/ai/plan', {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ userId: user?.uid, userName: user?.name, tasks, startTime: start }),
+        signal: AbortSignal.timeout(30000),
       })
       const data = await res.json()
       setPlan(data.schedule)
