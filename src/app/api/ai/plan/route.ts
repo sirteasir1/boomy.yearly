@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       userModel: null, memory: null, patterns: [],
       todayStats: { tasksCompleted:0, focusMinutes:0, sessionsCount:0, hourOfDay: new Date().getHours() },
     }
-    }
+
 
     const prompt = buildPlannerContext(bisCtx, userName ?? 'User', tasks) + `
 
