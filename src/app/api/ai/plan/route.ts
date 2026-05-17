@@ -20,11 +20,12 @@ export async function POST(req: NextRequest) {
     }
 
     if (userId) {
+      const timeout = (p: Promise<any>, fallback: any) => Promise.race([p, new Promise(r => setTimeout(() => r(fallback), 3000))])
       const [model, memory, patterns, sessions] = await Promise.all([
-        getUserModel(userId).catch(()=>null),
-        getMemorySummary(userId).catch(()=>null),
-        getPatterns(userId).catch(()=>[]),
-        getFocusSessions(userId).catch(()=>[]),
+        timeout(getUserModel(userId), null),
+        timeout(getMemorySummary(userId), null),
+        timeout(getPatterns(userId), []),
+        timeout(getFocusSessions(userId), []),
       ])
       const todaySess = sessions.filter(s => s.date === new Date().toISOString().slice(0,10) && s.completed)
       bisCtx = {
