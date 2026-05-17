@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ status: "insufficient_data", events: 0 })
     }
 
-    const existingModel = await Promise.race([getUserModel(userId), new Promise(res => setTimeout(() => res(null), 3000))]).catch(() => null)
+    const existingModel = await Promise.race([getUserModel(userId), new Promise<null>(res => setTimeout(() => res(null), 3000))]).catch(() => null) as any
     const model    = computeUserModel(userId, events, existingModel)
     const patterns = detectPatterns(model, events)
 
