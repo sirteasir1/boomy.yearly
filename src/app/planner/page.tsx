@@ -149,8 +149,8 @@ export default function PlannerPage() {
                     <div style={{ fontSize:11, fontFamily:'JetBrains Mono,monospace', color:'#2d3748', paddingTop:12, minWidth:44, textAlign:'right' }}>{block.time}</div>
                     <div style={{ flex:1, background:BLOCK_BG[block.type], border:`1px solid ${BLOCK_BORDER[block.type]}`, borderRadius:14, padding:'12px 14px', transition:'transform .15s' }}
                       className="hover:-translate-y-0.5">
-                      <div style={{ fontWeight:500, fontSize:13, marginBottom:4 }}>{block.title}</div>
-                      <div style={{ fontSize:11, color:'#94a3b8' }}>{block.duration} · {block.notes}</div>
+                      <div style={{ fontWeight:500, fontSize:13, marginBottom:4 }}>{(block as any).title || (block as any).task}</div>
+                      <div style={{ fontSize:11, color:'#94a3b8' }}>{(block as any).duration}min · {(block as any).notes || (block as any).reason}</div>
                     </div>
                   </motion.div>
                 ))}
