@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
         timeout(getPatterns(userId), []),
         timeout(getFocusSessions(userId), []),
       ])
-      const todaySess = sessions.filter(s => s.date === new Date().toISOString().slice(0,10) && s.completed)
+      const todaySess = (sessions as any[]).filter((s: any) => s.date === new Date().toISOString().slice(0,10) && s.completed)
       bisCtx = {
         userModel: model, memory, patterns,
         todayStats: {
