@@ -50,8 +50,7 @@ export function useBIS() {
 
     setLoading(true)
     try {
-      const events = await Promise.race([getRecentEvents(user.uid, 30), new Promise(res => setTimeout(() => res([]), 5000))])
-      if (!Array.isArray(events) || events.length === 0) { setLoading(false); return }
+      const events = await Promise.race([getRecentEvents(user.uid, 30), new Promise(res => setTimeout(() => res([]), 15000))])
       await fetch('/api/bis/analyze', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
