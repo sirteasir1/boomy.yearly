@@ -6,6 +6,7 @@ import {
   persistentMultipleTabManager,
 } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
+import { getAnalytics, isSupported } from 'firebase/analytics'
 
 const firebaseConfig = {
   apiKey:            process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
@@ -17,6 +18,7 @@ const firebaseConfig = {
 }
 
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig)
+if (typeof window !== 'undefined') { isSupported().then(yes => { if (yes) getAnalytics(app) }) }
 
 export const auth           = getAuth(app)
 export const googleProvider = new GoogleAuthProvider()
