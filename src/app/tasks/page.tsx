@@ -115,7 +115,6 @@ export default function TasksPage() {
                           <button onClick={e=>{
   e.stopPropagation()
   const nextStatus = NEXT[task.status]!
-  console.log('[TASK] moving to:', nextStatus, 'task id:', task.id)
   update(task.id,{status:nextStatus,updatedAt:Date.now()})
   if(nextStatus==='done'&&user){
     trackTaskCompleted(user.uid,{taskId:task.id,priority:task.priority,createdAt:task.createdAt,postponedTimes:(task as any).postponedTimes??0,hadSubtasks:false})
@@ -126,6 +125,12 @@ export default function TasksPage() {
                             <ArrowRight style={{ width:13, height:13 }}/>
                           </button>
                         )}
+                        <button onClick={e=>{e.stopPropagation();remove(task.id)}}
+                          style={{ background:'none', border:'none', cursor:'pointer', color:'#374151', padding:2 }}
+                          onMouseEnter={e=>(e.currentTarget.style.color='#f87171')}
+                          onMouseLeave={e=>(e.currentTarget.style.color='#374151')}>
+                          <Trash2 style={{ width:12, height:12 }}/>
+                        </button>
                       </div>
                     </motion.div>
                   ))}
@@ -154,3 +159,4 @@ export default function TasksPage() {
     </div>
   )
 }
+
