@@ -31,7 +31,14 @@ Return ONLY this JSON:
 
     const text  = await generate(prompt, SYSTEM)
     const clean = text.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim()
-    return NextResponse.json(JSON.parse(clean))
+    try {
+      const parsed = JSON.parse(clean)
+      // Support both {blocks:[]} and {schedule:[]} formats
+      const schedule = parsed.blocks || parsed.schedule || parsed
+      return NextResponse.json({ schedule })
+    } catch {
+      return NextResponse.json({ schedule: [], raw: clean })
+    }
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
