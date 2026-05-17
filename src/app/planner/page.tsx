@@ -2,7 +2,8 @@
 import { useLang  } from '@/lib/i18n/useLang'
 import { useStore } from '@/lib/store/useStore'
 import { trackPlannerGenerated, trackPlannerAccepted } from '@/lib/bis/collector'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useTasks } from '@/lib/hooks/useTasks'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, Plus, Trash2, Loader2, Coffee, Brain, Zap, Clock } from 'lucide-react'
 import type { PlannerTask, ScheduleBlock, Priority } from '@/types'
@@ -21,6 +22,14 @@ export default function PlannerPage() {
   const [tasks, setTasks] = useState<PlannerTask[]>([])
   const { user } = useStore()
   const tr = useLang()
+  const { tasks: realTasks } = useTasks()
+  useEffect(() => {
+    if (realTasks.length > 0 && tasks.length === 0) {
+      setTasks(realTasks.filter(t => t.status !== 'done').slice(0, 8).map(t => ({
+        id: t.id, name: t.title, dur: 60, priority: (t.priority as Priority) || 'med',
+      })))
+    }
+  }, [realTasks.length])
   const [input, setInput] = useState('')
   const [dur, setDur]     = useState(60)
   const [pri, setPri]     = useState<Priority>('med')
@@ -158,3 +167,4 @@ export default function PlannerPage() {
     </div>
   )
 }
+
