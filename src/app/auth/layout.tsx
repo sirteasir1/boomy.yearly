@@ -42,7 +42,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
         <div style={{ position:'relative', zIndex:1 }}>
           {/* Logo */}
-          <motion.div initial={{opacity:0,x:-20}} animate={{opacity:1,x:0}} transition={{duration:.5}}
+          <motion.div initial={{opacity:0,x:-20}} animate={{opacity:1,x:0}} transition={{duration:.2}}
             style={{ display:'flex', alignItems:'center', gap:12, marginBottom:52 }}>
             <Link href="/" style={{ display:'flex', alignItems:'center', gap:12, textDecoration:'none' }}>
               <img src="/logo-symbol.jpg" alt="Boomly" style={{ width:40,height:40,borderRadius:14,objectFit:'cover',boxShadow:'0 0 20px rgba(99,102,241,.4)' }}/>
@@ -51,7 +51,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           </motion.div>
 
           {/* Headline */}
-          <motion.div initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{delay:.1,duration:.6}}>
+          <motion.div initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{delay:.1,duration:.25}}>
             <h2 style={{ fontFamily:'Syne,sans-serif',fontWeight:900,fontSize:40,lineHeight:1.1,color:'#f8fafc',marginBottom:14,letterSpacing:'-1.5px' }}>
               Your AI<br/>
               <span style={{ background:'linear-gradient(90deg,#818cf8,#22d3ee)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent' }}>
@@ -66,7 +66,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           {/* Features */}
           <div style={{ display:'flex',flexDirection:'column',gap:14,marginBottom:44 }}>
             {FEATURES.map((f,i)=>(
-              <motion.div key={i} initial={{opacity:0,x:-16}} animate={{opacity:1,x:0}} transition={{delay:.15+i*.08,duration:.5}}
+              <motion.div key={i} initial={{opacity:0,x:-16}} animate={{opacity:1,x:0}} transition={{delay:.15+i*.08,duration:.2}}
                 style={{ display:'flex',alignItems:'center',gap:14 }}>
                 <div style={{ width:38,height:38,borderRadius:12,background:'rgba(99,102,241,.1)',border:'1px solid rgba(99,102,241,.2)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0 }}>
                   <f.icon size={17} color="#818cf8"/>

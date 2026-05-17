@@ -29,7 +29,7 @@ const TT_STYLE = {
 
 const FV = {
   hidden:  { opacity:0, y:14 },
-  visible: (i:number) => ({ opacity:1, y:0, transition:{ delay:i*.07, duration:.35 } }),
+  visible: (i:number) => ({ opacity:1, y:0, transition:{ delay:i*.03, duration:.35 } }),
 }
 
 export default function DashboardPage() {

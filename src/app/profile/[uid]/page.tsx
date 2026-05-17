@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation'
 import { getUserModel, getMemorySummary, getPatterns } from '@/lib/firebase/bis'
 import { format, subDays } from 'date-fns'
 
-const FV = { hidden:{opacity:0,y:14}, visible:(i:number)=>({opacity:1,y:0,transition:{delay:i*.07}}) }
+const FV = { hidden:{opacity:0,y:14}, visible:(i:number)=>({opacity:1,y:0,transition:{delay:i*.03}}) }
 const HM_COL = ['rgba(255,255,255,.04)','rgba(99,102,241,.2)','rgba(99,102,241,.4)','rgba(99,102,241,.65)','#6366f1']
 
 export default async function PublicProfilePage({ params }: { params: Promise<{ uid: string }> }) {

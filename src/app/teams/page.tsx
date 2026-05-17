@@ -332,7 +332,7 @@ export default function TeamsPage() {
           {/* Members list */}
           <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))',gap:12}}>
             {team.members.map((m,i)=>(
-              <motion.div key={m.uid} initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} transition={{delay:i*.06}}
+              <motion.div key={m.uid} initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} transition={{delay:i*.03}}
                 onClick={()=>m.uid!==user?.uid&&router.push(`/profile/${m.uid}`)}
                 style={{background:'rgba(7,7,26,.8)',border:`1px solid ${m.uid===user?.uid?'rgba(99,102,241,.25)':'rgba(255,255,255,.07)'}`,borderRadius:20,padding:18,display:'flex',alignItems:'center',gap:14,cursor:m.uid!==user?.uid?'pointer':'default'}}>
                 <div style={{position:'relative',flexShrink:0}}>

@@ -13,7 +13,7 @@ import { subDays, format } from 'date-fns'
 
 const ACCENT_COLS = ['#6366f1','#06b6d4','#10b981','#f43f5e','#f59e0b','#d946ef','#8b5cf6','#0ea5e9']
 
-const FV = { hidden:{opacity:0,y:14}, visible:(i:number)=>({opacity:1,y:0,transition:{delay:i*.07}}) }
+const FV = { hidden:{opacity:0,y:14}, visible:(i:number)=>({opacity:1,y:0,transition:{delay:i*.03}}) }
 
 export default function ProfilePage() {
   const { user, setUser } = useStore()

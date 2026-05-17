@@ -144,7 +144,7 @@ export default function PlannerPage() {
             <div style={{ flex:1, overflowY:'auto', padding:20, display:'flex', flexDirection:'column', gap:10 }}>
               <AnimatePresence>
                 {plan.map((block, i) => (
-                  <motion.div key={i} initial={{ opacity:0, x:12 }} animate={{ opacity:1, x:0 }} transition={{ delay:i*.06 }}
+                  <motion.div key={i} initial={{ opacity:0, x:12 }} animate={{ opacity:1, x:0 }} transition={{ delay:i*.03 }}
                     style={{ display:'flex', gap:14, alignItems:'flex-start', cursor:'pointer' }}>
                     <div style={{ fontSize:11, fontFamily:'JetBrains Mono,monospace', color:'#2d3748', paddingTop:12, minWidth:44, textAlign:'right' }}>{block.time}</div>
                     <div style={{ flex:1, background:BLOCK_BG[block.type], border:`1px solid ${BLOCK_BORDER[block.type]}`, borderRadius:14, padding:'12px 14px', transition:'transform .15s' }}

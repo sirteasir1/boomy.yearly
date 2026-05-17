@@ -57,7 +57,7 @@ function Navbar() {
   },[])
   return (
     <div style={{position:'fixed',top:16,left:'50%',transform:'translateX(-50%)',zIndex:200,width:'min(900px,calc(100vw - 32px))'}}>
-      <motion.nav initial={{opacity:0,y:-20}} animate={{opacity:1,y:0}} transition={{duration:.5}}
+      <motion.nav initial={{opacity:0,y:-20}} animate={{opacity:1,y:0}} transition={{duration:.2}}
         style={{background:scrolled?'rgba(4,4,20,0.92)':'rgba(7,7,26,0.7)',backdropFilter:'blur(28px)',WebkitBackdropFilter:'blur(28px)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:100,padding:'8px 16px',display:'flex',alignItems:'center',gap:8,boxShadow:scrolled?'0 8px 32px rgba(0,0,0,.5)':'0 4px 24px rgba(0,0,0,.3)',transition:'all .3s'}}>
         <Link href="/" style={{display:'flex',alignItems:'center',gap:9,textDecoration:'none',marginRight:'auto',flexShrink:0}}>
           <img src="/logo-symbol.jpg" alt="Boomly" style={{width:32,height:32,borderRadius:9,objectFit:'cover',flexShrink:0}}/>
@@ -159,7 +159,7 @@ function FAQList() {
   return (
     <div style={{display:'flex',flexDirection:'column',gap:10}}>
       {FAQS.map((item,i)=>(
-        <motion.div key={i} initial={{opacity:0,y:14}} whileInView={{opacity:1,y:0}} viewport={{once:true,margin:'-40px'}} transition={{delay:i*.05,duration:.45,ease:[.4,0,.2,1]}}>
+        <motion.div key={i} initial={{opacity:0,y:14}} whileInView={{opacity:1,y:0}} viewport={{once:true,margin:'-40px'}} transition={{delay:i*.02,duration:.2,ease:[.4,0,.2,1]}}>
           <div onClick={()=>setOpen(open===i?null:i)}
             style={{background:open===i?'rgba(99,102,241,.08)':'rgba(255,255,255,.025)',border:`1px solid ${open===i?'rgba(99,102,241,.28)':'rgba(255,255,255,.07)'}`,borderRadius:18,cursor:'pointer',overflow:'hidden',transition:'border-color .3s,background .3s'}}>
             <div style={{display:'flex',alignItems:'center',gap:14,padding:'18px 22px'}}>
@@ -208,7 +208,7 @@ const FEATURES=[
   {icon:Zap,     title:'Boom AI Memory',      desc:'Learns your goals and context — gives smarter, more personal recommendations daily.',    color:'#f472b6'},
 ]
 
-const FV={hidden:{opacity:0,y:20},visible:(i:number)=>({opacity:1,y:0,transition:{delay:i*.07,duration:.45,ease:[.4,0,.2,1] as any}})}
+const FV={hidden:{opacity:0,y:20},visible:(i:number)=>({opacity:1,y:0,transition:{delay:i*.03,duration:.2,ease:[.4,0,.2,1] as any}})}
 
 /* ── Main Page ───────────────────────────────────────────── */
 export default function LandingPage() {
@@ -238,9 +238,9 @@ export default function LandingPage() {
           <div style={{position:'absolute',inset:0,background:'linear-gradient(to bottom,rgba(2,2,9,1) 0%,rgba(2,2,9,.15) 25%,rgba(2,2,9,.05) 55%,rgba(2,2,9,.8) 85%,rgba(2,2,9,1) 100%)'}}/>
         </div>
 
-        <motion.div style={{y:heroY}} initial={{opacity:0,y:30}} animate={{opacity:1,y:0}} transition={{duration:.8,ease:[.4,0,.2,1]}}>
+        <motion.div style={{y:heroY}} initial={{opacity:0,y:30}} animate={{opacity:1,y:0}} transition={{duration:.3,ease:[.4,0,.2,1]}}>
           {/* Early access pill */}
-          <motion.div initial={{opacity:0,y:-10}} animate={{opacity:1,y:0}} transition={{delay:.2,duration:.5}}
+          <motion.div initial={{opacity:0,y:-10}} animate={{opacity:1,y:0}} transition={{delay:.2,duration:.2}}
             style={{display:'inline-flex',alignItems:'center',gap:8,background:'rgba(52,211,153,.08)',border:'1px solid rgba(52,211,153,.2)',borderRadius:40,padding:'7px 18px',fontSize:12,fontWeight:600,color:'#34d399',marginBottom:40,backdropFilter:'blur(10px)'}}>
             <div style={{width:6,height:6,borderRadius:'50%',background:'#34d399',animation:'aipulse 2s infinite'}}/>
             Early Access — Everything Free
@@ -320,7 +320,7 @@ export default function LandingPage() {
             Master your <span style={{background:'linear-gradient(90deg,#818cf8,#22d3ee)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>productivity OS.</span>
           </h2>
         </motion.div>
-        <motion.div initial={{opacity:0,y:24}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{duration:.6}}>
+        <motion.div initial={{opacity:0,y:24}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{duration:.25}}>
           <LearnVideo/>
         </motion.div>
       </section>
@@ -460,7 +460,7 @@ export default function LandingPage() {
 
       {/* ── GET IN TOUCH ── */}
       <section style={{position:'relative',zIndex:1,padding:'0 24px 90px'}}>
-        <motion.div initial={{opacity:0,y:28}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{duration:.6,ease:[.4,0,.2,1]}}
+        <motion.div initial={{opacity:0,y:28}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{duration:.25,ease:[.4,0,.2,1]}}
           style={{maxWidth:960,margin:'0 auto',position:'relative',borderRadius:28,overflow:'hidden'}}>
           <div style={{position:'absolute',inset:0,background:'linear-gradient(135deg,rgba(99,102,241,.08),rgba(6,182,212,.04))'}}/>
           <div style={{position:'absolute',top:-80,right:-80,width:260,height:260,borderRadius:'50%',background:'rgba(99,102,241,.1)',filter:'blur(70px)'}}/>
@@ -479,7 +479,7 @@ export default function LandingPage() {
                 {img:'/icon-linkedin.jpg',label:'LinkedIn',        val:'Yerbolat Rgalbek',     href:'https://www.linkedin.com/in/yerbolat-rgalbek-4b524b38b', bg:'rgba(10,102,194,.08)',border:'rgba(10,102,194,.22)',hover:'rgba(10,102,194,.13)'},
                 {img:'/icon-phone.jpg',   label:'Phone / WhatsApp',val:'+7 708 764 5571',      href:'tel:+77087645571',              bg:'rgba(52,199,89,.07)', border:'rgba(52,199,89,.18)', hover:'rgba(52,199,89,.12)'},
               ].map((c,i)=>(
-                <motion.div key={i} initial={{opacity:0,x:18}} whileInView={{opacity:1,x:0}} viewport={{once:true}} transition={{delay:i*.1,duration:.45}}>
+                <motion.div key={i} initial={{opacity:0,x:18}} whileInView={{opacity:1,x:0}} viewport={{once:true}} transition={{delay:i*.04,duration:.2}}>
                   <a href={c.href} target="_blank" rel="noreferrer"
                     style={{display:'flex',alignItems:'center',gap:14,padding:'13px 16px',background:c.bg,border:`1px solid ${c.border}`,borderRadius:16,textDecoration:'none',transition:'all .25s'}}
                     onMouseEnter={e=>{e.currentTarget.style.background=c.hover;e.currentTarget.style.transform='translateY(-2px)';e.currentTarget.style.boxShadow='0 8px 28px rgba(0,0,0,.25)'}}
