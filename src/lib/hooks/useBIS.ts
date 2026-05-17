@@ -60,7 +60,12 @@ export function useBIS() {
 
     setLoading(true)
     try {
-      const events = accEvents.current
+      // Read from localStorage for persistence across sessions
+      let events: any[] = []
+      try {
+        const stored = localStorage.getItem('bis_events_' + user.uid)
+        events = stored ? JSON.parse(stored) : []
+      } catch { events = [] }
       if (events.length === 0) { setLoading(false); return }
       await fetch('/api/bis/analyze', {
         method:  'POST',
