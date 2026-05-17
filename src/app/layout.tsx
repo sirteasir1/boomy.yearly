@@ -1,3 +1,4 @@
+import { PostHogProvider } from '@/components/PostHogProvider'
 import type { Metadata } from 'next'
 import './globals.css'
 import { AuthProvider } from '@/components/AuthProvider'
@@ -22,11 +23,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
+      <PostHogProvider>
       <body>
         <AuthProvider>
           {children}
         </AuthProvider>
       </body>
+      </PostHogProvider>
     </html>
   )
 }
