@@ -8,7 +8,7 @@
  */
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useStore } from '@/lib/store/useStore'
-import { subscribeToUserModel, getPatterns, getMemorySummary, getRecentEvents } from '@/lib/firebase/bis'
+import { subscribeToUserModel, getPatterns, getMemorySummary } from '@/lib/firebase/bis'
 import type { UserBehavioralModel, BehavioralPattern, MemorySummary } from '@/lib/bis/types'
 
 const ANALYSIS_COOLDOWN = 30 * 1000 // 30 seconds between analyses
@@ -20,8 +20,18 @@ export function useBIS() {
   const [memory,   setMemory]   = useState<MemorySummary | null>(null)
   const [loading,  setLoading]  = useState(false)
   const lastAnalysis = useRef(0)
+  const accEvents    = useRef<any[]>([])
 
   // Subscribe to real-time model updates from Firestore
+  // Accumulate events from collector
+  useEffect(() => {
+    const handler = (e: any) => {
+      accEvents.current = [...accEvents.current.slice(-99), e.detail]
+    }
+    window.addEventListener('bis:event', handler)
+    return () => window.removeEventListener('bis:event', handler)
+  }, [])
+
   useEffect(() => {
     if (!user?.uid) return
     const unsub = subscribeToUserModel(user.uid, setModel)
@@ -50,7 +60,8 @@ export function useBIS() {
 
     setLoading(true)
     try {
-      const events = await Promise.race([getRecentEvents(user.uid, 30), new Promise(res => setTimeout(() => res([]), 15000))])
+      const events = accEvents.current
+      if (events.length === 0) { setLoading(false); return }
       await fetch('/api/bis/analyze', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
