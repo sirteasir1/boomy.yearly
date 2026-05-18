@@ -477,7 +477,7 @@ export default function LandingPage() {
               {[
                 {img:'/icon-gmail.jpg',   label:'Email',           val:'rgalbeke@gmail.com',   href:'mailto:rgalbeke@gmail.com',     bg:'rgba(234,67,53,.07)',  border:'rgba(234,67,53,.18)',  hover:'rgba(234,67,53,.12)'},
                 {img:'/icon-linkedin.jpg',label:'LinkedIn',        val:'Yerbolat Rgalbek',     href:'https://www.linkedin.com/in/yerbolat-rgalbek-4b524b38b', bg:'rgba(10,102,194,.08)',border:'rgba(10,102,194,.22)',hover:'rgba(10,102,194,.13)'},
-                {img:'/icon-phone.jpg',   label:'Phone / WhatsApp',val:'+7 708 764 5571',      href:'tel:+77087645571',              bg:'rgba(52,199,89,.07)', border:'rgba(52,199,89,.18)', hover:'rgba(52,199,89,.12)'},
+                {img:'/icon-phone.jpg',   label:'Phone / WhatsApp',val:'contact with gmail',      href:'tel:+77087645571',              bg:'rgba(52,199,89,.07)', border:'rgba(52,199,89,.18)', hover:'rgba(52,199,89,.12)'},
               ].map((c,i)=>(
                 <motion.div key={i} initial={{opacity:0,x:18}} whileInView={{opacity:1,x:0}} viewport={{once:true}} transition={{delay:i*.04,duration:.2}}>
                   <a href={c.href} target="_blank" rel="noreferrer"
