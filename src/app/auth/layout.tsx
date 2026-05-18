@@ -22,12 +22,13 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     <div style={{
       minHeight: '100vh',
       display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
+      gridTemplateColumns: '1fr',
+    }} className="md:grid-cols-2" style={{
       background: '#020209',
     }}>
 
       {/* ── LEFT: info panel ── */}
-      <div style={{
+      <div className="hidden md:flex" style={{
         position: 'relative',
         overflow: 'hidden',
         background: 'rgba(4,4,18,0.97)',
