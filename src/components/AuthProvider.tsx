@@ -6,6 +6,7 @@
  */
 import { useEffect } from 'react'
 import { onAuthStateChanged, getRedirectResult } from 'firebase/auth'
+import posthog from 'posthog-js'
 import { auth } from '@/lib/firebase/config'
 import { getUser, createUser } from '@/lib/firebase/firestore'
 import { useStore } from '@/lib/store/useStore'
@@ -41,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (fbUser) {
           // Try to load the Firestore profile; fall back to Firebase Auth data
           const profile = await getUser(fbUser.uid).catch(() => null)
-          setUser(profile ?? {
+          const u = profile ?? {
             uid:      fbUser.uid,
             email:    fbUser.email ?? '',
             name:     fbUser.displayName ?? fbUser.email?.split('@')[0] ?? 'User',
@@ -52,8 +53,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               theme: 'dark', focusDuration: 25, shortBreak: 5, longBreak: 15,
               workdayStart: '09:00', workdayEnd: '18:00', aiMemory: true, notifications: true,
             },
-          })
+          }
+          posthog.identify(u.uid, { email: u.email, name: u.name })
+          setUser(u)
         } else {
+          posthog.reset()
           setUser(null)
         }
       } catch {
