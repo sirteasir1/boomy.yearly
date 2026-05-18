@@ -27,7 +27,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     }}>
 
       {/* ── LEFT: info panel ── */}
-      <div className="hidden md:flex" style={{ display:'flex',
+      <div className="hidden md:flex" style={{
         position: 'relative',
         overflow: 'hidden',
         background: 'rgba(4,4,18,0.97)',
