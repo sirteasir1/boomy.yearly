@@ -23,7 +23,6 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       minHeight: '100vh',
       display: 'grid',
       gridTemplateColumns: '1fr',
-    }} className="md:grid-cols-2" style={{
       background: '#020209',
     }}>
 
