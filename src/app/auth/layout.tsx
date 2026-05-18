@@ -19,15 +19,15 @@ const STATS = [
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{
+    <div className="auth-grid" style={{
       minHeight: '100vh',
       display: 'grid',
-      gridTemplateColumns: '1fr',
+      gridTemplateColumns: '1fr 1fr',
       background: '#020209',
     }}>
 
       {/* ── LEFT: info panel ── */}
-      <div className="hidden md:flex" style={{
+      <div className="hidden md:flex" style={{ display:'flex',
         position: 'relative',
         overflow: 'hidden',
         background: 'rgba(4,4,18,0.97)',
